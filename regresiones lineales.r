@@ -38,3 +38,36 @@ casos$pob_aprox<- contagio_dia_1 * exp(casos$Dia *tasa)
   ggplot(data = casos,mapping = aes(x = Dia,y = Casos))+
   geom_point()+
   labs(title = '    casos coronavirus')
+#Coronavirus y casos esperados  
+  ggplot(data = casos,mapping = aes(x = Dia,y = pob_aprox))+
+    geom_point()+
+    labs(title = '    casos coronavirus aproximado')  
+  
+  
+#Regresiones cuadraticas
+  #creamos la matriz 2A
+  matriz_2A<-matrix(data = 1,nrow = 96,1)
+  matriz_2A<-cbind(matriz_2A,dia)
+  dia_2<-dia^2
+  matriz_2A<-cbind(matriz_2A,dia_2)
+  
+  #Multiplicacion de matriz_2A^T *matriz_2A
+  Matriz_2B<-t(matriz_2A) %*% matriz_2A
+  
+  #Multiplicacion de matriz_2A^T *Matriz_ln
+  Matriz_2C<-t(matriz_2A) %*% matriz_Ln
+  
+  # Multiplicacion de (Inversa de 2A^t*A)*(matriz_2A^T *Matriz_ln)
+  Matriz_2Ln_K<-solve(Matriz_2B)%*% Matriz_2C
+  
+  #Tasa de crecimiento
+  tasa2<-Matriz_2Ln_K[2,1]
+  contagio2_dia_1<-Matriz_Ln_K[1,1]
+  
+  casos$casos2_aprox<-contagio2_dia_1*exp(casos$Dia *tasa2)  
+  
+  #Graficar los casos
+  ggplot(data = casos,mapping = aes(x = Dia,y = casos2_aprox))+
+    geom_point()+
+    labs(title = '    casos coronavirus')
+    
