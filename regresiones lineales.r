@@ -9,17 +9,14 @@ matriz_A<-matrix(data = 1,nrow = nrow(casos),1)
 dia<-(casos$Dia)-1
 matriz_A<-cbind(matriz_A,dia)
 
-#creamos la matriz transpuesta A
-trans_A<-t(matriz_A)
-
 # Matriz con Ln de los casos
 matriz_Ln<-log(casos$Casos)
 
 #Multiplicacion de matriz_A^T *A
-Matriz_B<-trans_A %*% matriz_A
+Matriz_B<-t(matriz_A) %*% matriz_A
 
 #Multiplicacion de matriz_A^T *Matriz_ln
-Matriz_C<-trans_A %*% matriz_Ln
+Matriz_C<-t(matriz_A) %*% matriz_Ln
 
 #Matriz inversa de matriz_A^ *A
 Inv_B<-solve(Matriz_B) 
@@ -71,3 +68,4 @@ casos$pob_aprox<- round(x = contagio_dia_1 * exp(casos$Dia *tasa),digits = 0)
   ggplot(data = casos,mapping = aes(x = Dia,y = casos2_aprox))+
     geom_point()+
     labs(title = '    casos coronavirus')
+   
