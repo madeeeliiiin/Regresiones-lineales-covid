@@ -5,8 +5,8 @@ library(ggplot2)
 casos<-read.csv("infcovid.csv", sep = "")
 
 #creamos la matriz A
-matriz_A<-matrix(data = 1,nrow = 96,1)
-dia<-casos$Dia
+matriz_A<-matrix(data = 1,nrow = nrow(casos),1)
+dia<-(casos$Dia)-1
 matriz_A<-cbind(matriz_A,dia)
 
 #creamos la matriz transpuesta A
@@ -46,7 +46,7 @@ casos$pob_aprox<- round(x = contagio_dia_1 * exp(casos$Dia *tasa),digits = 0)
   
 #Regresiones cuadraticas
   #creamos la matriz 2A
-  matriz_2A<-matrix(data = 1,nrow = 96,1)
+  matriz_2A<-matrix(data = 1,nrow = nrow(casos),1)
   matriz_2A<-cbind(matriz_2A,dia)
   dia_2<-dia^2
   matriz_2A<-cbind(matriz_2A,dia_2)
@@ -62,13 +62,12 @@ casos$pob_aprox<- round(x = contagio_dia_1 * exp(casos$Dia *tasa),digits = 0)
   
   #Tasa de crecimiento
   tasa2<-Matriz_2Ln_K[2,1]
-  contagio2_dia_1<-Matriz_Ln_K[1,1]
+  contagio2_dia_1<-Matriz_2Ln_K[1,1]
   c2<-Matriz_2Ln_K[3,1]
-  
-  casos$casos2_aprox<-round(x = (exp(contagio2_dia_1)*exp(tasa2*casos$Dia))+(c2*(casos$Dia)^2),digits = 0)
+ 
+  casos$casos2_aprox<-round(x = exp(contagio2_dia_1)*exp(tasa2*dia + c2*((dia)^2)),digits = 0)
   
   #Graficar los casos
   ggplot(data = casos,mapping = aes(x = Dia,y = casos2_aprox))+
     geom_point()+
     labs(title = '    casos coronavirus')
-    
