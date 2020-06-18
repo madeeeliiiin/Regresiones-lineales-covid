@@ -32,7 +32,7 @@ tasa<-Matriz_Ln_K[2,1]
 contagio_dia_1<-Matriz_Ln_K[1,1]
 
 #Calculo de casos aproximados con poblacion inicial  * EXP(dia *tasa)
-casos$pob_aprox<- contagio_dia_1 * exp(casos$Dia *tasa)
+casos$pob_aprox<- round(x = contagio_dia_1 * exp(casos$Dia *tasa),digits = 0)
 
 #Graficar los casos
   ggplot(data = casos,mapping = aes(x = Dia,y = Casos))+
@@ -63,8 +63,9 @@ casos$pob_aprox<- contagio_dia_1 * exp(casos$Dia *tasa)
   #Tasa de crecimiento
   tasa2<-Matriz_2Ln_K[2,1]
   contagio2_dia_1<-Matriz_Ln_K[1,1]
+  c2<-Matriz_2Ln_K[3,1]
   
-  casos$casos2_aprox<-contagio2_dia_1*exp(casos$Dia *tasa2)  
+  casos$casos2_aprox<-round(x = (exp(contagio2_dia_1)*exp(tasa2*casos$Dia))+(c2*(casos$Dia)^2),digits = 0)
   
   #Graficar los casos
   ggplot(data = casos,mapping = aes(x = Dia,y = casos2_aprox))+
