@@ -38,7 +38,9 @@ casos$pob_aprox<- round(x = contagio_dia_1 * exp(casos$Dia *tasa),digits = 0)
 #Coronavirus y casos esperados  
   ggplot(data = casos,mapping = aes(x = Dia,y = pob_aprox))+
     geom_point()+
-    labs(title = '    casos coronavirus aproximado')  
+    labs(title = '    casos coronavirus aproximado')+
+    geom_smooth()
+  
   
   
 #Regresiones cuadraticas
@@ -64,8 +66,11 @@ casos$pob_aprox<- round(x = contagio_dia_1 * exp(casos$Dia *tasa),digits = 0)
  
   casos$casos2_aprox<-round(x = exp(contagio2_dia_1)*exp(tasa2*dia + c2*((dia)^2)),digits = 0)
   
-  #Graficar los casos
-  ggplot(data = casos,mapping = aes(x = Dia,y = casos2_aprox))+
+  #Graficar los casos y las regresiones lineales
+  ggplot(data = casos,mapping = aes(x = Dia,y = Casos))+
     geom_point()+
-    labs(title = '    casos coronavirus')
-   
+    labs(title = 'casos coronavirus')+
+    geom_smooth(colour="Red")+
+    stat_smooth(mapping = aes(x=Dia,y=casos2_aprox))+
+    stat_smooth(mapping = aes(x = Dia,y = pob_aprox),colour="Green")
+  
