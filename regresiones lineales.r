@@ -73,4 +73,3 @@ casos$pob_aprox<- round(x = contagio_dia_1 * exp(casos$Dia *tasa),digits = 0)
     geom_smooth(colour="Red")+
     stat_smooth(mapping = aes(x=Dia,y=casos2_aprox))+
     stat_smooth(mapping = aes(x = Dia,y = pob_aprox),colour="Green")
-  
