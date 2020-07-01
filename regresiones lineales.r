@@ -2,7 +2,9 @@
 
 library(dplyr)
 library(ggplot2)
-casos<-read.csv("infcovid.csv", sep = "")
+casos<-read.csv("casos.csv", sep = ";")
+names(casos)[1] <- "Dia"
+names(casos)[2] <- "Casos"
 
 #creamos la matriz A
 matriz_A<-matrix(data = 1,nrow = nrow(casos),1)
@@ -29,17 +31,12 @@ tasa<-Matriz_Ln_K[2,1]
 contagio_dia_1<-Matriz_Ln_K[1,1]
 
 #Calculo de casos aproximados con poblacion inicial  * EXP(dia *tasa)
-casos$pob_aprox<- round(x = contagio_dia_1 * exp(casos$Dia *tasa),digits = 0)
+casos$casos_aprox<- round(x = contagio_dia_1 * exp(casos$Dia *tasa),digits = 0)
 
 #Graficar los casos
   ggplot(data = casos,mapping = aes(x = Dia,y = Casos))+
   geom_point()+
-  labs(title = '    casos coronavirus')
-#Coronavirus y casos esperados  
-  ggplot(data = casos,mapping = aes(x = Dia,y = pob_aprox))+
-    geom_point()+
-    labs(title = '    casos coronavirus aproximado')+
-    geom_smooth()
+  labs(title = '    casos coronavirus')+stat_smooth(mapping = aes(x=Dia,y=casos_aprox))
   
   
   
@@ -70,6 +67,15 @@ casos$pob_aprox<- round(x = contagio_dia_1 * exp(casos$Dia *tasa),digits = 0)
   ggplot(data = casos,mapping = aes(x = Dia,y = Casos))+
     geom_point()+
     labs(title = 'casos coronavirus')+
-    geom_smooth(colour="Red")+
     stat_smooth(mapping = aes(x=Dia,y=casos2_aprox))+
-    stat_smooth(mapping = aes(x = Dia,y = pob_aprox),colour="Green")
+    stat_smooth(mapping = aes(x = Dia,y = casos_aprox),colour="Green")
+  
+  
+  ################################### Regresiones con la funcion lm ###################################
+  # build linear regression model on full data
+  Modelo_1<- lm(log(Casos) ~ dia, data=casos)                 
+  print(Modelo_1)
+  
+  # build quadratic regression model on full data
+  Modelo_2<- lm(log(Casos) ~ dia + dia^2, data=casos)    
+  print(Modelo_2) 
