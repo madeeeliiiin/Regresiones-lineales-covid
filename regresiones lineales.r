@@ -66,10 +66,16 @@ casos$casos_aprox<- round(x = contagio_dia_1 * exp(casos$Dia *tasa),digits = 0)
   #Graficar los casos y las regresiones lineales
   ggplot(data = casos,mapping = aes(x = Dia,y = Casos))+
     geom_point()+
-    labs(title = 'casos coronavirus')+
+    labs(title = 'casos coronavirus',subtitle = 'exponencial')+
     stat_smooth(mapping = aes(x=Dia,y=casos2_aprox))+
-    stat_smooth(mapping = aes(x = Dia,y = casos_aprox),colour="Green")
+    stat_smooth(mapping = aes(x = Dia,y = casos_aprox),colour="Green")+
+    stat_smooth(mapping = aes(x = Dia,y = log(Casos)),colour="red")+
+    stat_smooth(mapping = aes(x = Dia,y = log(Dia)),colour="white")
   
+  ggplot(data = casos,mapping = aes(x = Dia,y = log(Casos)))+
+    geom_point()+
+    stat_smooth(mapping = aes(x=Dia,y=log(casos2_aprox),colour="casos aprox"))
+    
   
   ################################### Regresiones con la funcion lm ###################################
   # build linear regression model on full data
@@ -77,5 +83,7 @@ casos$casos_aprox<- round(x = contagio_dia_1 * exp(casos$Dia *tasa),digits = 0)
   print(Modelo_1)
   
   # build quadratic regression model on full data
-  Modelo_2<- lm(log(Casos) ~ dia + dia^2, data=casos)    
-  print(Modelo_2) 
+  x<-dia^2
+  Modelo_2<- lm(log(Casos) ~ (dia + x), data=casos)    
+  print(Modelo_2)  
+ 
