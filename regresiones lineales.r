@@ -66,13 +66,12 @@ casos$casos_aprox<- round(x = contagio_dia_1 * exp(casos$Dia *tasa),digits = 0)
   #Graficar los casos y las regresiones lineales
   ggplot(data = casos,mapping = aes(x = Dia,y = Casos))+
     geom_point()+
-    labs(title = 'casos coronavirus',subtitle = 'exponencial')+
-    stat_smooth(mapping = aes(x=Dia,y=casos2_aprox))+
-    stat_smooth(mapping = aes(x = Dia,y = casos_aprox),colour="Green")+
-    stat_smooth(mapping = aes(x = Dia,y = log(Casos)),colour="red")+
-    stat_smooth(mapping = aes(x = Dia,y = log(Dia)),colour="white")
+    labs(title = 'casos coronavirus')+
+    stat_smooth(mapping = aes(x=Dia,y=casos2_aprox,colour="regresion cuadratica"))+
+    stat_smooth(mapping = aes(x = Dia,y = casos_aprox,colour="regresion lineal"))
+ 
   
-  ggplot(data = casos,mapping = aes(x = Dia,y = log(Casos)))+
+  ggplot(data = casos,mapping = aes(x = Dia,y = log(Casos),colour="Casos"))+
     geom_point()+
     stat_smooth(mapping = aes(x=Dia,y=log(casos2_aprox),colour="casos aprox"))
     
@@ -86,4 +85,4 @@ casos$casos_aprox<- round(x = contagio_dia_1 * exp(casos$Dia *tasa),digits = 0)
   x<-dia^2
   Modelo_2<- lm(log(Casos) ~ (dia + x), data=casos)    
   print(Modelo_2)  
- 
+  
