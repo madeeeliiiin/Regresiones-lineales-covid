@@ -1,11 +1,11 @@
 #Regresiones lineales casos de covid
 
-library(dplyr)
 library(ggplot2)
 casos<-read.csv("casos.csv", sep = ";")
 names(casos)[1] <- "Dia"
 names(casos)[2] <- "Casos"
 
+########################## Regresiones lineales manual########################## 
 #creamos la matriz A
 matriz_A<-matrix(data = 1,nrow = nrow(casos),1)
 dia<-(casos$Dia)-1
@@ -17,31 +17,22 @@ matriz_Ln<-log(casos$Casos)
 #Multiplicacion de matriz_A^T *A
 Matriz_B<-t(matriz_A) %*% matriz_A
 
-#Multiplicacion de matriz_A^T *Matriz_ln
-Matriz_C<-t(matriz_A) %*% matriz_Ln
-
-#Matriz inversa de matriz_A^ *A
-Inv_B<-solve(Matriz_B) 
-
 # Multiplicacion de (Inversa de A^t*A)*(matriz_A^T *Matriz_ln)
-Matriz_Ln_K<-Inv_B %*% Matriz_C
+Matriz_Ln_K<-solve(Matriz_B)  %*% (t(matriz_A) %*% matriz_Ln)
 
 #Tasa de crecimiento
-tasa<-Matriz_Ln_K[2,1]
-contagio_dia_1<-Matriz_Ln_K[1,1]
+tasa<-Matriz_Ln_K[2]
+contagio_dia_1<-Matriz_Ln_K[1]
 
-#Calculo de casos aproximados con poblacion inicial  * EXP(dia *tasa)
-casos$casos_aprox<- round(x = contagio_dia_1 * exp(casos$Dia *tasa),digits = 0)
+######################## Regresion lineal con la funcion lm #############################
+Modelo_1<- lm(log(Casos) ~ dia, data=casos)                 
+print(Modelo_1)
 
-#Graficar los casos
-  ggplot(data = casos,mapping = aes(x = Dia,y = Casos))+
-  geom_point()+
-  labs(title = '    casos coronavirus')+stat_smooth(mapping = aes(x=Dia,y=casos_aprox))
-  
-  
-  
-#Regresiones cuadraticas
-  #creamos la matriz 2A
+#Calculo de casos aproximados con exp(poblacion inicial)  * EXP(dia *tasa)
+casos$casos_aprox<- exp(contagio_dia_1)*exp(casos$Dia *tasa)
+
+########################## Regresiones cuadraticas manual########################## 
+#creamos la matriz 2A
   matriz_2A<-matrix(data = 1,nrow = nrow(casos),1)
   matriz_2A<-cbind(matriz_2A,dia)
   dia_2<-dia^2
@@ -50,18 +41,20 @@ casos$casos_aprox<- round(x = contagio_dia_1 * exp(casos$Dia *tasa),digits = 0)
   #Multiplicacion de matriz_2A^T *matriz_2A
   Matriz_2B<-t(matriz_2A) %*% matriz_2A
   
-  #Multiplicacion de matriz_2A^T *Matriz_ln
-  Matriz_2C<-t(matriz_2A) %*% matriz_Ln
-  
   # Multiplicacion de (Inversa de 2A^t*A)*(matriz_2A^T *Matriz_ln)
-  Matriz_2Ln_K<-solve(Matriz_2B)%*% Matriz_2C
+  Matriz_2Ln_K<-solve(Matriz_2B)%*% (t(matriz_2A) %*% matriz_Ln)
   
   #Tasa de crecimiento
-  tasa2<-Matriz_2Ln_K[2,1]
-  contagio2_dia_1<-Matriz_2Ln_K[1,1]
-  c2<-Matriz_2Ln_K[3,1]
- 
-  casos$casos2_aprox<-round(x = exp(contagio2_dia_1)*exp(tasa2*dia + c2*((dia)^2)),digits = 0)
+  tasa2<-Matriz_2Ln_K[2]
+  contagio2_dia_1<-Matriz_2Ln_K[1]
+  c2<-Matriz_2Ln_K[3]
+  
+  ######################## Regresion cuadratica con la funcion lm #############################
+  Modelo_2<- lm(log(Casos) ~ (dia + dia_2), data=casos)    
+  print(Modelo_2) 
+  
+  #Calculo de casos aproximados con exp(contagio2_dia_1)*exp(tasa2*dia + c2*((dia)^2)))
+  casos$casos2_aprox<- exp(contagio2_dia_1)*exp(tasa2*dia + c2*((dia)^2))
   
   #Graficar los casos y las regresiones lineales
   ggplot(data = casos,mapping = aes(x = Dia,y = Casos))+
@@ -70,19 +63,8 @@ casos$casos_aprox<- round(x = contagio_dia_1 * exp(casos$Dia *tasa),digits = 0)
     stat_smooth(mapping = aes(x=Dia,y=casos2_aprox,colour="regresion cuadratica"))+
     stat_smooth(mapping = aes(x = Dia,y = casos_aprox,colour="regresion lineal"))
  
-  
+  #Graficos de la escala logaritmica
   ggplot(data = casos,mapping = aes(x = Dia,y = log(Casos),colour="Casos"))+
     geom_point()+
-    stat_smooth(mapping = aes(x=Dia,y=log(casos2_aprox),colour="casos aprox"))
-    
-  
-  ################################### Regresiones con la funcion lm ###################################
-  # build linear regression model on full data
-  Modelo_1<- lm(log(Casos) ~ dia, data=casos)                 
-  print(Modelo_1)
-  
-  # build quadratic regression model on full data
-  x<-dia^2
-  Modelo_2<- lm(log(Casos) ~ (dia + x), data=casos)    
-  print(Modelo_2)  
-  
+    labs(title = 'escala logaritmica')+
+    stat_smooth(mapping = aes(x=Dia,y=log(casos_aprox),colour="casos aprox")) 
