@@ -4,6 +4,7 @@ library(ggplot2)
 casos<-read.csv("casos.csv", sep = ";")
 names(casos)[1] <- "Dia"
 names(casos)[2] <- "Casos"
+names(casos)[3]<-"Fallecidos"
 
 ########################## Regresiones lineales manual Muertes########################## 
 #creamos la matriz A
@@ -112,13 +113,14 @@ casos$casos_aprox<- exp(contagio_dia_1)*exp(casos$Dia *tasa)
   #Grafica de los fallecimientos
   ggplot(data = casos,mapping = aes(x = Dia,y = Fallecidos))+
     geom_point()+
+    labs(title = 'Fallecidos')+
     stat_smooth(mapping = aes(x = Dia,y = Fallecidos_aprox,colour="Fallecidos aproximados"))+
     stat_smooth(mapping = aes(x = Dia,y = Fallecimientos2_aprox,colour="Fallecidos aproximados cuadraticos"))
  
   #Graficos de la escala logaritmica de los casos
   ggplot(data = casos,mapping = aes(x = Dia,y = log(Casos),colour="Casos"))+
     geom_point()+
-    labs(title = 'escala logaritmica')+
+    labs(title = 'escala logaritmica casos')+
     geom_smooth(mapping = aes(x = Dia,y=log(casos_aprox),colour="casos aprox"),method = "lm")
   
   #Grafica de la escala logaritmica de muertes 
@@ -127,7 +129,3 @@ casos$casos_aprox<- exp(contagio_dia_1)*exp(casos$Dia *tasa)
     labs(title = 'escala logaritmica fallecidos')+
     geom_smooth(mapping = aes(x = Dia,y=log(Fallecidos_aprox),colour="Fallecidos aprox"),method = "lm")
   
-  #Grafica de casos actuales y muertos
-  ggplot(data = casos,mapping = aes(x = Dia,y = Fallecidos))+
-    geom_point()+
-    stat_smooth(mapping = aes(x = Dia,y = Casos,colour="Casos"))
