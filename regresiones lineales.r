@@ -1,7 +1,7 @@
 #Regresiones lineales casos de covid
 
 library(ggplot2)
-casos<-read.csv("casos.csv", sep = ";")
+casos<-read.csv("casoscsv", sep = ";")
 names(casos)[1] <- "Dia"
 names(casos)[2] <- "Casos"
 names(casos)[3]<-"Fallecidos"
