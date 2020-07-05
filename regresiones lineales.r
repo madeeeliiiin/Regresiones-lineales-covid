@@ -1,7 +1,7 @@
 #Regresiones lineales casos de covid
 
 library(ggplot2)
-casos<-read.csv("casoscsv", sep = ";")
+casos<-read.csv("casos.csv", sep = ";")
 names(casos)[1] <- "Dia"
 names(casos)[2] <- "Casos"
 names(casos)[3]<-"Fallecidos"
@@ -32,7 +32,7 @@ print(Modelo_1)
 #Calculo de casos aproximados con exp(poblacion inicial)  * EXP(dia *tasa)
 casos$casos_aprox<- exp(contagio_dia_1)*exp(casos$Dia *tasa)
 
-########################## Regresiones cuadraticas manual########################## 
+########################## Regresiones exponencial con coeficientes cuadratico manual########################## 
 #creamos la matriz 2A
   matriz_2A<-matrix(data = 1,nrow = nrow(casos),1)
   matriz_2A<-cbind(matriz_2A,dia)
@@ -107,7 +107,7 @@ casos$casos_aprox<- exp(contagio_dia_1)*exp(casos$Dia *tasa)
   ggplot(data = casos,mapping = aes(x = Dia,y = Casos))+
     geom_point()+
     labs(title = 'casos coronavirus')+
-    stat_smooth(mapping = aes(x=Dia,y=casos2_aprox,colour="regresion cuadratica"))+
+    stat_smooth(mapping = aes(x=Dia,y=casos2_aprox,colour="regresion con coeficientes cuadratico"))+
     stat_smooth(mapping = aes(x = Dia,y = casos_aprox,colour="regresion lineal"))
   
   #Grafica de los fallecimientos
